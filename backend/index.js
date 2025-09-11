@@ -1,20 +1,25 @@
+
+import 'module-alias/register';
 import express from 'express';
-import cors from 'cors';
+import { ApolloServer } from 'apollo-server-express';
 import dotenv from 'dotenv';
+import cors from 'cors';
+import connectDB from '@config/db.js';
+import typeDefs from '@graphql/schema.js';
+import resolvers from '@graphql/resolvers.js';
+
 dotenv.config();
-
-import connectDB from './config/db.js';
-import authRoutes from './routes/authRoutes.js';
-import blogRoutes from './routes/blogRoutes.js';
-
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-connectDB(); 
+connectDB();
 
-app.use('/api/auth', authRoutes);
-app.use('/api/blogs', blogRoutes);
+const server = new ApolloServer({ typeDefs, resolvers });
+await server.start();
+server.applyMiddleware({ app });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}${server.graphqlPath}`);
+});

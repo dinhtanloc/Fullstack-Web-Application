@@ -12,6 +12,15 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "module-alias": "^2.2.3"
+  },
+  "_moduleAliases": {
+    "@models": "models",
+    "@controllers": "controllers",
+    "@routes": "routes",
+    "@middleware": "middleware",
+    "@utils": "utils",
+    "@graphql": "graphql"
   }
 }
