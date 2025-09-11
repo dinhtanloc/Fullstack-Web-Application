@@ -1,15 +1,20 @@
-const express = require('express');
-const app = express();
-const port = 3000;
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+dotenv.config();
 
-// Middleware để parse JSON
+import connectDB from './config/db.js';
+import authRoutes from './routes/authRoutes.js';
+import blogRoutes from './routes/blogRoutes.js';
+
+const app = express();
+app.use(cors());
 app.use(express.json());
 
-// API test
-app.get('/api/hello', (req, res) => {
-    res.json({ message: 'Hello from backend!' });
-});
+connectDB(); 
 
-app.listen(port, () => {
-    console.log(`Backend running at http://localhost:${port}`);
-});
+app.use('/api/auth', authRoutes);
+app.use('/api/blogs', blogRoutes);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
