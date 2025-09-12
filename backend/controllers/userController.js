@@ -1,6 +1,9 @@
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
 import { ObjectId } from 'mongodb';
 import { Users } from '@db/models/index.js';
-
+import { generateAccessToken, generateRefreshToken } from '@middleware/authMiddleware.js';
 /**
  * Fetch all the users from database
  * @returns {User[]} List of all users
@@ -54,3 +57,60 @@ export const update = async (id, input) =>
  */
 export const remove = async (id) =>
   (await Users.deleteOne({ _id: new ObjectId(id) })).deletedCount > 0;
+
+
+export const register = async (req, res) => {
+  const { email, username, password, ...rest } = req.body;
+  const existingUser = await Users.findOne({ $or: [{ email }, { username }] });
+  if (existingUser) {
+    return res.status(400).json({ error: 'Email hoặc username đã tồn tại' });
+  }
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const userId = (await Users.insertOne({ email, username, password: hashedPassword, ...rest })).insertedId;
+  const user = await getById(userId);
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  res.json({ user, token });
+};
+
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await Users.findOne({ email });
+  if (!user) {
+    return res.status(400).json({ error: 'Email không tồn tại' });
+  }
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return res.status(400).json({ error: 'Sai mật khẩu' });
+  }
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
+
+  await Users.updateOne({ _id: user._id }, { $set: { refreshToken } });
+
+  res.json({ user, accessToken, refreshToken });
+};
+
+
+export const refreshToken = async (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) return res.status(401).json({ error: 'No refresh token provided' });
+
+  // Tìm user có refreshToken này
+  const user = await Users.findOne({ refreshToken });
+  if (!user) return res.status(403).json({ error: 'Invalid refresh token' });
+
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const newAccessToken = generateAccessToken(user);
+    res.json({ accessToken: newAccessToken });
+  } catch (err) {
+    res.status(403).json({ error: 'Invalid or expired refresh token' });
+  }
+};
+
+
+export const logout = async (req, res) => {
+  // Xóa refreshToken khỏi DB
+  await Users.updateOne({ _id: req.user._id }, { $unset: { refreshToken: "" } });
+  res.json({ message: 'Đăng xuất thành công' });
+};

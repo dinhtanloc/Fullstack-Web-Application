@@ -1,6 +1,14 @@
 import jwt from 'jsonwebtoken';
 import User from '../db/models/User.js';
 
+const generateAccessToken = (user) => {
+  return jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '15m' }); // 15 phút
+};
+
+const generateRefreshToken = (user) => {
+  return jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' }); // 7 ngày
+};
+
 export const protect = async (req, res, next) => {
   let token;
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {

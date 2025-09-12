@@ -2,9 +2,18 @@
   "name": "backend",
   "version": "1.0.0",
   "type": "module",
+  "aliases": {
+    "@config": "db",
+    "@graphql": "graphql",
+    "@utils": "utils",
+    "@middleware": "middleware",
+    "@routes": "routes",
+    "@models": "db/models",
+    "@controllers": "controllers"
+  },
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node --loader ./my-loader.mjs --no-warnings ./index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -12,15 +21,35 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@apollo/server": "^5.0.0",
+    "@as-integrations/express5": "^1.1.2",
+    "@google-cloud/functions-framework": "^4.0.0",
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "esm-module-alias": "^2.2.1",
     "express": "^5.1.0",
-    "module-alias": "^2.2.3"
+    "graphql": "^16.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "module-alias": "^2.2.3",
+    "mongodb": "^6.19.0"
   },
   "_moduleAliases": {
+    "@root": ".",
     "@models": "models",
     "@controllers": "controllers",
     "@routes": "routes",
     "@middleware": "middleware",
     "@utils": "utils",
     "@graphql": "graphql"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/node": "^7.28.0",
+    "@babel/preset-env": "^7.28.3",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "esbuild": "^0.25.9",
+    "esbuild-plugin-alias": "^0.2.1"
   }
 }

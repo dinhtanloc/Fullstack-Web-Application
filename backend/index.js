@@ -1,19 +1,18 @@
 
-import 'module-alias/register';
+
 import express from 'express';
 import cors from 'cors';
 import http from 'http';
 import 'dotenv/config';
 import gFunctions from '@google-cloud/functions-framework';
 import { ApolloServer } from '@apollo/server';
-import { expressMiddleware } from '@apollo/server/express4';
+import { expressMiddleware } from '@as-integrations/express5';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import {
   resolvers,
   schemas,
   contextHandler
 } from '@graphql/index.js';
-import resolvers from '@graphql/resolvers.js';
 
 dotenv.config();
 const app = express();
