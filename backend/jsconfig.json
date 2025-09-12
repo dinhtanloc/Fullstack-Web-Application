@@ -2,12 +2,12 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@config/*": ["config/*"],
+      "@config/*": ["db/*"],
       "@graphql/*": ["graphql/*"],
       "@utils/*": ["utils/*"],
       "@middleware/*": ["middleware/*"],
       "@routes/*": ["routes/*"],
-      "@models/*": ["models/*"],
+      "@models/*": ["db/models/*"],
       "@controllers/*": ["controllers/*"]
     }
   }
