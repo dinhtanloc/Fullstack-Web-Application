@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { Posts } from '../db/models/index.js';
-import * as usersController from './users-controller.js';
+import * as usersController from './userController.js';
 
 /**
  * Fetch all the posts from database

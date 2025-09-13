@@ -1,6 +1,7 @@
 import generateAliasesResolver from 'esm-module-alias';
 
 const aliases = {
+  "@db": "db",
   "@config": "db",
   "@graphql": "graphql",
   "@utils": "utils",
